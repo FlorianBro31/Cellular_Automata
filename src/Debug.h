@@ -6,6 +6,7 @@
     #include <stdio.h>
     #include <stdlib.h>
 #endif
+#include "Defines.h"
 #include "Objects.h"
 
 //Debug function, prints the grid.

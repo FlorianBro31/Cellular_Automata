@@ -49,8 +49,8 @@ void Init(SDL_Window** fenetre, SDL_Renderer** renderer)
     {
         ExitWithError("Erreur d'initialisation du renderer");
     }
-    //Allocation mémoire pour la grille 110x160
-    grille = malloc(sizeof(pixel*) * GRID_HEIGHT); 
+    //Allocation mémoire pour la grille (now :110x160)
+    grille = malloc(sizeof(pixel*) * GRID_HEIGHT);
     for (int i = 0; i < GRID_HEIGHT; i++)
     {
         grille[i] = malloc(sizeof(pixel)*GRID_WIDTH);

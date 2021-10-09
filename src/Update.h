@@ -17,6 +17,7 @@
 #include "Defines.h"
 #include "Objects.h"
 #include "Utils.h"
+
 //Called each frame to check if a particule should be created, creates it if so.
 extern void UpdateParticulesNumber(Mode, pixel**, Particule[PARTICULE_MAX], Element element_param);
 

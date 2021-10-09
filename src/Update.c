@@ -573,53 +573,52 @@ void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PART
         {
             int Mouse_x, Mouse_y;
             SDL_GetMouseState(&Mouse_x, &Mouse_y);
-            if(Mouse_x%5 != 0)
+            if(Mouse_x%PARTICULE_SIZE != 0)
             {
-                if(Mouse_x%5>=3){Mouse_x += (5-Mouse_x%5);}
-                else{Mouse_x -= Mouse_x%5;}
+                if(Mouse_x%PARTICULE_SIZE>=3){Mouse_x += (PARTICULE_SIZE-Mouse_x%PARTICULE_SIZE);}
+                else{Mouse_x -= Mouse_x%PARTICULE_SIZE;}
             }
-            if(Mouse_y%5 != 0)
+            if(Mouse_y%PARTICULE_SIZE != 0)
             {
-                if(Mouse_y%5>=3){Mouse_y += (5-Mouse_y%5);}
-                else{Mouse_y -= Mouse_y%5;}
+                if(Mouse_y%PARTICULE_SIZE>=3){Mouse_y += (PARTICULE_SIZE-Mouse_y%PARTICULE_SIZE);}
+                else{Mouse_y -= Mouse_y%PARTICULE_SIZE;}
             }
-            if(Mouse_y/5 <= GRID_HEIGHT-1 && Mouse_x/5 <= GRID_WIDTH-1 && grille[Mouse_y/5][Mouse_x/5].element == VOID) //On check que l'emplacement est bien vide
+            if(TO_PARTCULE_SIZE(Mouse_y) < GRID_HEIGHT && TO_PARTCULE_SIZE(Mouse_x) < GRID_WIDTH && grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].element == VOID) //On check que l'emplacement est bien vide
             {
                 Particules[current_particule].ID = current_particule;
                 Particules[current_particule].element = element_param;
                 Particules[current_particule].hasbeenupdated = SDL_TRUE;
                 Particules[current_particule].box.w = PARTICULE_SIZE;
                 Particules[current_particule].box.h = PARTICULE_SIZE;
-                Particules[current_particule].box.x = Mouse_x;//(rand()%159)*5;
+                Particules[current_particule].box.x = Mouse_x;
                 Particules[current_particule].box.y = Mouse_y;
-                Particules[current_particule].pos_x_norm = Particules[current_particule].box.x/PARTICULE_SIZE;
-                Particules[current_particule].pos_y_norm = Particules[current_particule].box.y/PARTICULE_SIZE;
+                Particules[current_particule].pos_x_norm = TO_PARTCULE_SIZE(Particules[current_particule].box.x);
+                Particules[current_particule].pos_y_norm = TO_PARTCULE_SIZE(Particules[current_particule].box.y);
                 grille[Particules[current_particule].pos_y_norm][Particules[current_particule].pos_x_norm].element = Particules[current_particule].element;
                 grille[Particules[current_particule].pos_y_norm][Particules[current_particule].pos_x_norm].ID = Particules[current_particule].ID;
                 current_particule++;
                 frame_count = 0;
             }
-            //ParticuleToBeCreated = SDL_FALSE;
         }
-        else if(ParticuleToBeDestroyed && ParticuleToBeCreated && (frame_count > 3 || FrameByFrameMode))
+        else if(ParticuleToBeDestroyed && ParticuleToBeCreated && (frame_count > 3 || FrameByFrameMode)) //Delete a particule
         {
             int Mouse_x, Mouse_y;
             SDL_GetMouseState(&Mouse_x, &Mouse_y);
-            if(Mouse_x%5 != 0)
+            if(Mouse_x%PARTICULE_SIZE != 0)
             {
-                if(Mouse_x%5>=3){Mouse_x += (5-Mouse_x%5);}
-                else{Mouse_x -= Mouse_x%5;}
+                if(Mouse_x%PARTICULE_SIZE>=3){Mouse_x += (PARTICULE_SIZE-Mouse_x%PARTICULE_SIZE);}
+                else{Mouse_x -= Mouse_x%PARTICULE_SIZE;}
             }
-            if(Mouse_y%5 != 0)
+            if(Mouse_y%PARTICULE_SIZE != 0)
             {
-                if(Mouse_y%5>=3){Mouse_y += (5-Mouse_y%5);}
-                else{Mouse_y -= Mouse_y%5;}
+                if(Mouse_y%PARTICULE_SIZE>=3){Mouse_y += (PARTICULE_SIZE-Mouse_y%PARTICULE_SIZE);}
+                else{Mouse_y -= Mouse_y%PARTICULE_SIZE;}
             }
-            if(Mouse_y/5 <= GRID_HEIGHT-1 && Mouse_x/5 <= GRID_WIDTH-1 && grille[Mouse_y/5][Mouse_x/5].element != VOID && grille[Mouse_y/5][Mouse_x/5].element != FLOOR)
+            if(TO_PARTCULE_SIZE(Mouse_y) < GRID_HEIGHT && TO_PARTCULE_SIZE(Mouse_x) < GRID_WIDTH && grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].element != VOID && grille[Mouse_y/5][Mouse_x/5].element != FLOOR)
             {
-                int id_part = grille[Mouse_y/5][Mouse_x/5].ID;
-                grille[Mouse_y/5][Mouse_x/5].element = VOID;
-                grille[Mouse_y/5][Mouse_x/5].ID = PARTICULE_MAX + 1;
+                int id_part = grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].ID;
+                grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].element = VOID;
+                grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].ID = PARTICULE_MAX + 1;
                 //Replace with the last particule in the list
                 if(Particules[current_particule-1].element != VOID)
                 {

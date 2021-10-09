@@ -199,7 +199,7 @@ int main(int argc, char* argv[])
 
         //Rendu du floor et du mur
         if(SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE) != 0 ){ExitWithError("SDL_RenderDrawColor");}
-        if(SDL_RenderFillRects(renderer, FloorAndWall, (160+110)) != 0 ){ExitWithError("SDL_RenderFillRects");}
+        if(SDL_RenderFillRects(renderer, FloorAndWall, (GRID_HEIGHT+GRID_WIDTH)) != 0 ){ExitWithError("SDL_RenderFillRects");}
 
         //Rendu des particules
         for(int i = 0; i<current_particule; i++)

@@ -3,7 +3,7 @@
 void PrintGrille(pixel** grille)
 {
     FILE* fichier_dump = fopen("debug_dump.txt", "w");
-    for(int i = 0; i<110; i++)
+    for(int i = 0; i<GRID_HEIGHT; i++)
     {
         for(int y = 0; y<50; y++)
         {
