@@ -24,6 +24,7 @@ extern SDL_bool FrameByFrameMode; //*flag : Mode frame by frame
 extern SDL_bool Help; //*flag : help
 extern int current_particule; //Traque le nombre de particule présentes
 extern int frame_count; //Traque le nombre de frame, on commence à 9 pour arriver à 10 et créer une particule lors de la 1ère frame
+extern int cursor_pad; //Deals with the size of the cursor
 
 extern Element element_param; //Quel élément on veut créer lors d'un clic de souris
 extern SDL_bool Pause; //Pause flag

@@ -8,6 +8,7 @@ SDL_bool ParticuleToBeDestroyed=SDL_FALSE;
 SDL_bool FrameByFrameMode = SDL_FALSE;
 int current_particule = 0; //count the number of current particules, and point to the last one, can be used like a Stack Pointer
 int frame_count = 9;
+int cursor_pad = 0;
 Uint32 starting_tick = 0;
 SDL_bool programRunnig = SDL_TRUE;
 SDL_bool MousePressed = SDL_FALSE;

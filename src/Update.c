@@ -583,6 +583,11 @@ void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PART
                 if(Mouse_y%PARTICULE_SIZE>=3){Mouse_y += (PARTICULE_SIZE-Mouse_y%PARTICULE_SIZE);}
                 else{Mouse_y -= Mouse_y%PARTICULE_SIZE;}
             }
+            for (int i = 0; i < cursor_pad/PARTICULE_SIZE; i++)
+            {
+                if()
+            }
+            
             if(TO_PARTCULE_SIZE(Mouse_y) < GRID_HEIGHT && TO_PARTCULE_SIZE(Mouse_x) < GRID_WIDTH && grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].element == VOID) //On check que l'emplacement est bien vide
             {
                 Particules[current_particule].ID = current_particule;
@@ -692,28 +697,28 @@ void UpdateCursor(SDL_Renderer** renderer)
     int Mouse_x, Mouse_y;
     SDL_GetMouseState(&Mouse_x, &Mouse_y);
     SDL_Rect Cursor[4];
-    Cursor[0].w = Cursor[1].w = Cursor[2].h = Cursor[3].h =  9;
+    Cursor[0].w = Cursor[1].w = Cursor[2].h = Cursor[3].h =  (PARTICULE_SIZE+cursor_pad)+4;
     Cursor[0].h = Cursor[1].h = Cursor[2].w = Cursor[3].w = 1;
     //Set up the cursor
-    if(Mouse_x%5 != 0)
+    if(Mouse_x%PARTICULE_SIZE != 0)
     {
-        if(Mouse_x%5>=3){Mouse_x += (5-Mouse_x%5);}
-        else{Mouse_x -= Mouse_x%5;}
+        if(Mouse_x%PARTICULE_SIZE>=3){Mouse_x += (PARTICULE_SIZE-Mouse_x%PARTICULE_SIZE);}
+        else{Mouse_x -= Mouse_x%PARTICULE_SIZE;}
     }
-    if(Mouse_y%5 != 0)
+    if(Mouse_y%PARTICULE_SIZE != 0)
     {
-        if(Mouse_y%5>=3){Mouse_y += (5-Mouse_y%5);}
-        else{Mouse_y -= Mouse_y%5;}
+        if(Mouse_y%PARTICULE_SIZE>=3){Mouse_y += (PARTICULE_SIZE-Mouse_y%PARTICULE_SIZE);}
+        else{Mouse_y -= Mouse_y%PARTICULE_SIZE;}
     }
-    if(Mouse_y/5 <= GRID_HEIGHT-1 && Mouse_x/5 <= GRID_WIDTH-1)//Mouse is within the grid
+    if(TO_PARTCULE_SIZE(Mouse_y) < GRID_HEIGHT && TO_PARTCULE_SIZE(Mouse_x) < GRID_WIDTH)//Mouse is within the grid
     {
         Cursor[0].x = Mouse_x-2;
         Cursor[0].y = Mouse_y-1;
         Cursor[1].x = Mouse_x-2;
-        Cursor[1].y = Mouse_y+5;
+        Cursor[1].y = Mouse_y+(PARTICULE_SIZE+cursor_pad);
         Cursor[2].x = Mouse_x-1;
         Cursor[2].y = Mouse_y-2;
-        Cursor[3].x = Mouse_x+5;
+        Cursor[3].x = Mouse_x+(PARTICULE_SIZE+cursor_pad);
         Cursor[3].y = Mouse_y-2;
     }
     if(SDL_SetRenderDrawColor(*renderer, Blanc.r ,Blanc.g, Blanc.b, Blanc.a)!=0){ExitWithError("SDL_SetRenderDrawColor");}

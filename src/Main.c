@@ -26,12 +26,6 @@
 #include "Update.h"
 #include "Texte.h"
 
-/*
-  TODO_FOR_V0.1.8 : -Make clean : x
-                    -Wall on the right side of the screen : x
-
-  TODO_FOR_V0.1.9 : -Code optimisation : 
-*/
 
 int main(int argc, char* argv[])
 {
@@ -178,6 +172,22 @@ int main(int argc, char* argv[])
                 default:
                     break;
                 }
+            case SDL_MOUSEWHEEL:
+                if(event.wheel.y > 0)//Scroll up
+                {
+                    //Change size of the cursor to a bigger one
+                    cursor_pad+=5;
+
+                }
+                else if(event.wheel.y < 0) //Scroll down
+                {
+                    //Change size of the cursor to a smaller one
+                    if(cursor_pad != 0)
+                        cursor_pad-=5;
+                }
+                
+                break;
+
             default:
                 break;
             }
