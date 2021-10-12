@@ -49,8 +49,8 @@ typedef struct Particule
     Element element; //L'élément de la particule
     int pos_x_norm; //Sa position x normalisé, cad divisé par la largeur de la particule
     int pos_y_norm; //Sa position y normalisé, cad divisé par la hauteur de la particule
-    int height; //Devrait être 5
-    int width;  //Devrait être 5
+    uint8_t height; //Devrait être PARTICULE_SIZE
+    uint8_t width;  //Devrait être PARTICULE_SIZE
     int ID;  //Son ID unique 
     int update_counter; //Compte le nombre de fois que la particule a été update, peut ne pas être utilisé
     SDL_Rect box; //Son hit box, qui sert aussi au rendu

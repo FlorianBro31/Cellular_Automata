@@ -4,7 +4,7 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
 {
     switch (grille[y][x].element)
     {
-    case SAND:
+    case SAND://! TODO_REWORW : WATER INTERACTION PHYSICS
         if((grille[y+1][x].element == VOID) || (grille[y+1][x].element == LIQUID))//Si la place en bas est libre
         {
             int id_part = grille[y][x].ID;
@@ -19,7 +19,7 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
                         Particules[id_part].box.y += PARTICULE_SIZE;
                         Particules[id_part].hasbeenupdated = SDL_TRUE;
                         Particules[id_neighbour].pos_y_norm -=1;
-                        Particules[id_neighbour].box.y -=PARTICULE_SIZE;
+                        Particules[id_neighbour].box.y -= PARTICULE_SIZE;
                         Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = LIQUID;
                         grille[y][x].ID = Particules[id_neighbour].ID;
@@ -551,7 +551,7 @@ void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PART
 {
     switch (mode)
     {
-    case AUTO:
+    case AUTO://Not usable 
         if((frame_count == 10) && (current_particule < PARTICULE_MAX)) //Rajoute une particule toute les 10 frames
         {
             Particules[current_particule].element = SAND;
