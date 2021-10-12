@@ -78,116 +78,117 @@ int main(int argc, char* argv[])
             case SDL_MOUSEBUTTONDOWN://Front montant du clique
                 switch (event.button.button)
                 {
-                case SDL_BUTTON_LEFT: //Clique gauche
-                    SDL_GetMouseState(&Mouse_x, &Mouse_y);
-                    if((Mouse_x < TO_PIXEL_SIZE(GRID_WIDTH)) && (Mouse_y < TO_PIXEL_SIZE(GRID_HEIGHT)))//On clique dans l'écran principale
-                    {
-                        if(event.button.state == SDL_PRESSED )//On veut créer une particule
+                    case SDL_BUTTON_LEFT: //Clique gauche
+                        SDL_GetMouseState(&Mouse_x, &Mouse_y);
+                        if((Mouse_x < TO_PIXEL_SIZE(GRID_WIDTH)) && (Mouse_y < TO_PIXEL_SIZE(GRID_HEIGHT)))//On clique dans l'écran principale
                         {
-                            MousePressed = ParticuleToBeCreated = SDL_TRUE;
+                            if(event.button.state == SDL_PRESSED )//On veut créer une particule
+                            {
+                                MousePressed = ParticuleToBeCreated = SDL_TRUE;
+                            }
                         }
-                    }
-                    else //On ne clique pas dans l'écran principale
-                    {
-                        ParticuleToBeCreated = SDL_FALSE; 
-                    }
-                default:
-                    break;
+                        else //On ne clique pas dans l'écran principale
+                        {
+                            ParticuleToBeCreated = SDL_FALSE; 
+                        }
+                    default:
+                        break;
                 }
                 break;
             case SDL_MOUSEBUTTONUP: //Front descendant du clique
                 switch (event.button.button)
                 {
-                case SDL_BUTTON_LEFT: //clique gauche
-                    if(event.button.state == SDL_RELEASED) //On ne veut plus créer de particule
-                    {
-                        MousePressed = ParticuleToBeCreated = SDL_FALSE;
-                    }
-                    break;
-                default:
-                    break;
+                    case SDL_BUTTON_LEFT: //clique gauche
+                        if(event.button.state == SDL_RELEASED) //On ne veut plus créer de particule
+                        {
+                            MousePressed = ParticuleToBeCreated = SDL_FALSE;
+                        }
+                        break;
+                    default:
+                        break;
                 }
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
                 {
-                case SDLK_F1:
-                    if(!Help)//Load
-                        HelpMenuLoadUnload(LOAD);
-                    else if(Help)//Unload
-                        HelpMenuLoadUnload(UNLOAD);
-                    Pause = SDL_TRUE;
-                    Help = !Help;
-                    break;
-                case SDLK_1:
-                    element_param = SAND;
-                    break;
-                case SDLK_2:
-                    element_param = LIQUID;
-                    break;
-                case SDLK_3:
-                    element_param = SOLID;
-                    break;
-                case SDLK_4:
-                    element_param = WOOD;
-                    break;
-                case SDLK_5:
-                    element_param = FIRE;
-                    break;
-                case SDLK_SPACE:
-                    if(!FrameByFrameMode && !Help)
-                        Pause = !Pause;
-                    break;
-                case SDLK_p:
-                    PrintGrille(grille);
-                    printf("Printed\n");
-                    break;
-                case SDLK_x:
-                    ParticuleToBeDestroyed = !ParticuleToBeDestroyed;
-                    break;
-                case SDLK_f:
-                    if(!Pause)
-                        FrameByFrameMode = !FrameByFrameMode;
-                    break;
-                case SDLK_RIGHT:
-                    if(FrameByFrameMode && !Pause)
+                    case SDLK_F1:
+                        if(!Help)//Load
+                            HelpMenuLoadUnload(LOAD);
+                        else if(Help)//Unload
+                            HelpMenuLoadUnload(UNLOAD);
+                        Pause = SDL_TRUE;
+                        Help = !Help;
+                        break;
+                    case SDLK_1:
+                        element_param = SAND;
+                        break;
+                    case SDLK_2:
+                        element_param = LIQUID;
+                        break;
+                    case SDLK_3:
+                        element_param = SOLID;
+                        break;
+                    case SDLK_4:
+                        element_param = WOOD;
+                        break;
+                    case SDLK_5:
+                        element_param = FIRE;
+                        break;
+                    case SDLK_SPACE:
+                        if(!FrameByFrameMode && !Help)
+                            Pause = !Pause;
+                        break;
+                    case SDLK_p:
+                        PrintGrille(grille);
+                        printf("Printed\n");
+                        break;
+                    case SDLK_x:
+                        ParticuleToBeDestroyed = !ParticuleToBeDestroyed;
+                        break;
+                    case SDLK_f:
+                        if(!Pause)
+                            FrameByFrameMode = !FrameByFrameMode;
+                        break;
+                    case SDLK_RIGHT:
                     {
-                        frame_count++;
-                        for(int y = GRID_HEIGHT-2; y>=0; y = y-1)//On parcourt la grille toute les frames (en évitant le sol)
+                        if(FrameByFrameMode && !Pause)
                         {
-                            for(int x = GRID_WIDTH-1; x>= 0; x = x-1)//(int x = 0; x<160; x = x+1)
+                            frame_count++;
+                            for(int y = GRID_HEIGHT-2; y>=0; y = y-1)//On parcourt la grille toute les frames (en évitant le sol)
                             {
-                                if(grille[y][x].element != VOID && grille[y][x].element != SOLID)//Il y a un truc qui peut bouger
+                                for(int x = GRID_WIDTH-1; x>= 0; x = x-1)//(int x = 0; x<160; x = x+1)
                                 {
-                                    UpdateParticule(x, y, grille, Particules);//Update le truc
+                                    if(grille[y][x].element != VOID && grille[y][x].element != SOLID)//Il y a un truc qui peut bouger
+                                    {
+                                        UpdateParticule(x, y, grille, Particules);//Update le truc
+                                    }
                                 }
                             }
+                            for (int i = 0; i < current_particule; i++)
+                            {
+                                Particules[i].hasbeenupdated = SDL_FALSE;
+                            }
                         }
-                        for (int i = 0; i < current_particule; i++)
-                        {
-                            Particules[i].hasbeenupdated = SDL_FALSE;
-                        }
+                        break;
                     }
-                    break;
-                default:
-                    break;
+                    default:
+                        break;
                 }
+                break;
             case SDL_MOUSEWHEEL:
                 if(event.wheel.y > 0)//Scroll up
                 {
                     //Change size of the cursor to a bigger one
-                    cursor_pad+=5;
+                    cursor_pad+=PARTICULE_SIZE;
 
                 }
                 else if(event.wheel.y < 0) //Scroll down
                 {
                     //Change size of the cursor to a smaller one
                     if(cursor_pad != 0)
-                        cursor_pad-=5;
+                        cursor_pad-=PARTICULE_SIZE;
                 }
-                
                 break;
-
             default:
                 break;
             }

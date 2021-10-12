@@ -33,7 +33,8 @@ void UpdateTexteNumberParticules(int current_particule, SDL_Renderer** renderer)
         size = 2;
     else if(current_particule < 10000)//1000..10 000
         size = 3;
-    
+    else if(current_particule < 100000)//10 000...100 000
+        size = 4;
     MessageNbPart_Rect.w = 25 + (25*size);
     
     SDL_Surface* MessageNbPart_Surface;
