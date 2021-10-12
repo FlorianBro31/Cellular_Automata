@@ -587,22 +587,26 @@ void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PART
             {
                 for (int y = 0; y <= TO_PARTCULE_SIZE(cursor_pad); y++)
                 {
-                    if(TO_PARTCULE_SIZE(Mouse_y)+y < GRID_HEIGHT && TO_PARTCULE_SIZE(Mouse_x)+i < GRID_WIDTH && grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].element == VOID  && (current_particule < PARTICULE_MAX)) //On check que l'emplacement est bien vide
+                    if(TO_PARTCULE_SIZE(Mouse_y)+y < GRID_HEIGHT && TO_PARTCULE_SIZE(Mouse_x)+i < GRID_WIDTH)
                     {
-                        Particules[current_particule].ID = current_particule;
-                        Particules[current_particule].element = element_param;
-                        Particules[current_particule].hasbeenupdated = SDL_TRUE;
-                        Particules[current_particule].box.w = PARTICULE_SIZE;
-                        Particules[current_particule].box.h = PARTICULE_SIZE;
-                        Particules[current_particule].box.x = Mouse_x+TO_PIXEL_SIZE(i);
-                        Particules[current_particule].box.y = Mouse_y+TO_PIXEL_SIZE(y);
-                        Particules[current_particule].pos_x_norm = TO_PARTCULE_SIZE(Particules[current_particule].box.x);
-                        Particules[current_particule].pos_y_norm = TO_PARTCULE_SIZE(Particules[current_particule].box.y);
-                        grille[Particules[current_particule].pos_y_norm][Particules[current_particule].pos_x_norm].element = Particules[current_particule].element;
-                        grille[Particules[current_particule].pos_y_norm][Particules[current_particule].pos_x_norm].ID = Particules[current_particule].ID;
-                        current_particule++;
-                        frame_count = 0;
+                        if(grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].element == VOID  && (current_particule < PARTICULE_MAX)) //On check que l'emplacement est bien vide
+                        {
+                            Particules[current_particule].ID = current_particule;
+                            Particules[current_particule].element = element_param;
+                            Particules[current_particule].hasbeenupdated = SDL_TRUE;
+                            Particules[current_particule].box.w = PARTICULE_SIZE;
+                            Particules[current_particule].box.h = PARTICULE_SIZE;
+                            Particules[current_particule].box.x = Mouse_x+TO_PIXEL_SIZE(i);
+                            Particules[current_particule].box.y = Mouse_y+TO_PIXEL_SIZE(y);
+                            Particules[current_particule].pos_x_norm = TO_PARTCULE_SIZE(Particules[current_particule].box.x);
+                            Particules[current_particule].pos_y_norm = TO_PARTCULE_SIZE(Particules[current_particule].box.y);
+                            grille[Particules[current_particule].pos_y_norm][Particules[current_particule].pos_x_norm].element = Particules[current_particule].element;
+                            grille[Particules[current_particule].pos_y_norm][Particules[current_particule].pos_x_norm].ID = Particules[current_particule].ID;
+                            current_particule++;
+                            frame_count = 0;
+                        }
                     }
+                    
                 }
             }
         }
@@ -620,20 +624,29 @@ void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PART
                 if(Mouse_y%PARTICULE_SIZE>=3){Mouse_y += (PARTICULE_SIZE-Mouse_y%PARTICULE_SIZE);}
                 else{Mouse_y -= Mouse_y%PARTICULE_SIZE;}
             }
-            if(TO_PARTCULE_SIZE(Mouse_y) < GRID_HEIGHT && TO_PARTCULE_SIZE(Mouse_x) < GRID_WIDTH && grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].element != VOID && grille[Mouse_y/5][Mouse_x/5].element != FLOOR)
+            for (int i = 0; i <= TO_PARTCULE_SIZE(cursor_pad); i++)
             {
-                int id_part = grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].ID;
-                grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].element = VOID;
-                grille[TO_PARTCULE_SIZE(Mouse_y)][TO_PARTCULE_SIZE(Mouse_x)].ID = PARTICULE_MAX + 1;
-                //Replace with the last particule in the list
-                if(Particules[current_particule-1].element != VOID)
+                for (int y = 0; y <= TO_PARTCULE_SIZE(cursor_pad); y++)
                 {
-                    Particules[id_part] = Particules[current_particule-1]; //Replace all parameters
-                    Particules[id_part].ID = id_part; //change the ID
-                    grille[Particules[id_part].pos_y_norm][Particules[id_part].pos_x_norm].ID = id_part; //Change the grid ID
+                    if(TO_PARTCULE_SIZE(Mouse_y)+y < GRID_HEIGHT && TO_PARTCULE_SIZE(Mouse_x)+i < GRID_WIDTH)
+                    {
+                        if(grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].element != VOID && grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].element != FLOOR)
+                        {
+                            int id_part = grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].ID;
+                            grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].element = VOID;
+                            grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].ID = PARTICULE_MAX + 1;
+                            //Replace with the last particule in the list
+                            if(Particules[current_particule-1].element != VOID)
+                            {
+                                Particules[id_part] = Particules[current_particule-1]; //Replace all parameters
+                                Particules[id_part].ID = id_part; //change the ID
+                                grille[Particules[id_part].pos_y_norm][Particules[id_part].pos_x_norm].ID = id_part; //Change the grid ID
+                            }
+                            current_particule--;
+                            frame_count = 0;
+                        }    
+                    }  
                 }
-                current_particule--;
-                frame_count = 0;
             }
         }
         break;
