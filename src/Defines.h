@@ -5,7 +5,7 @@
 #define LOAD 1
 #define UNLOAD 0
 
-#define PARTICULE_SIZE  5//Width = length, is a square
+#define PARTICULE_SIZE  1//Width = length, is a square
 
 #define TO_PIXEL_SIZE(x) (x*PARTICULE_SIZE)
 #define TO_PARTCULE_SIZE(x) (x/PARTICULE_SIZE)
@@ -21,5 +21,7 @@
 
 #define PARTICULE_MAX 10000
 #define SELECTION_SIZE 10
+
+#define SIMULATION_SPEED 200
 
 #endif

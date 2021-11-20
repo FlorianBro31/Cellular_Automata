@@ -1,7 +1,7 @@
 SRCS:= src/Main.c src/Debug.c src/Objects.c src/Texte.c src/Update.c src/Utils.c
 OBJS:= src/Main.o src/Debug.o src/Objects.o src/Texte.o src/Update.o src/Utils.o
 TARGET:= bin/game
-COMPILER:= clang
+COMPILER:= gcc
 #SRCS:= $(wildcard src/*.c)
 #OBJS:= $(SRCS:.c=.o)
 #Probably a good way to automate this but for my sanity I'll do it the dumb way

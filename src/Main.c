@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     ClearGrid(grille);
     //Créé le sol
     CreateFloor(grille, FloorAndWall);
-    SDL_ShowCursor(SDL_DISABLE);//On disable le curseur pour pouvoir créer le notre à partir des SDL_Rect
+    SDL_ShowCursor(SDL_DISABLE);//On disable le curseur pour pouvoir créer le nôtre à partir des SDL_Rect
     while(programRunnig)//Boucle "infini" du jeu
     {
         starting_tick = SDL_GetTicks();//Utile pour cap les fps
@@ -255,7 +255,7 @@ int main(int argc, char* argv[])
         //On dessine le tout
         SDL_RenderPresent(renderer);
 
-        FrameCap(starting_tick, 60);//Cap les fps à 60
+        FrameCap(starting_tick, SIMULATION_SPEED);//Cap les fps à 60
         if(frame_count >20)//Prevents overflowing if user isn't doing anything
         {
             frame_count = 0;
