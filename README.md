@@ -29,5 +29,5 @@ Active/deactivate the deletion mode by pressing `x`.
 
 # Parameters
 
-you can change the parameters of the simulation by editing the `Defines.h` file.
+You can change the parameters of the simulation by editing the `Defines.h` file.
 
