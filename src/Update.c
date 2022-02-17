@@ -4,7 +4,7 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
 {
     switch (grille[y][x].element)
     {
-    case SAND://! TODO_REWORW : WATER INTERACTION PHYSICS
+    case SAND://! TODO_REWORK : WATER INTERACTION PHYSICS
         if((grille[y+1][x].element == VOID) || (grille[y+1][x].element == LIQUID))//Si la place en bas est libre
         {
             int id_part = grille[y][x].ID;

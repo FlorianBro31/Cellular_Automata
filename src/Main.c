@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     ClearGrid(grille);
     //Créé le sol
     CreateFloor(grille, FloorAndWall);
-    SDL_ShowCursor(SDL_DISABLE);//On disable le curseur pour pouvoir créer le nôtre à partir des SDL_Rect
+    SDL_ShowCursor(SDL_DISABLE);//On disable le curseur pour pouvoir créer le notre à partir des SDL_Rect
     while(programRunnig)//Boucle "infini" du jeu
     {
         starting_tick = SDL_GetTicks();//Utile pour cap les fps
