@@ -7,7 +7,8 @@ A very basic Cellular Automata written in C using the SDL2 and SDL2_ttf librarie
 To build this project you will need the [SDL2 library](https://www.libsdl.org/download-2.0.php) and the [SDL2_ttf library](https://www.libsdl.org/projects/SDL_ttf/) installed.</br>
  
 * Install the arial.ttf font and add it to the `assets/fonts` folder.
-* type `make` and the game will build and launch.
+* Type `make` and the game will build.
+* `./game` to launch the game.
 
 # Controls
 
