@@ -8,7 +8,7 @@ void PrintGrille(pixel** grille)
         for(int y = 0; y<50; y++)
         {
             //if(grille[i][y].element != VOID)
-                fprintf(fichier_dump, "[%d,%d],", grille[i][y].element, grille[i][y].ID);
+                fprintf(fichier_dump, "[%d],", grille[i][y].element);
         }
         fprintf(fichier_dump, "\n");
     }

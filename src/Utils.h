@@ -53,6 +53,12 @@ extern void Init(SDL_Window**, SDL_Renderer**);
 extern void FrameCap(Uint32 ,int);
 
 //Fills the grid with VOID
-extern void ClearGrid(pixel**);
+extern void ClearGrid();
+
+//Add a particule to the linked list of parts
+extern Particule* AddParticule();
+
+//Remove a particule from the list, also update grille
+extern void DeleteParticule(Particule* part_to_delete);
 
 #endif

@@ -1,41 +1,43 @@
 #include "Update.h"
 
-void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICULE_MAX])
+//void UpdateParticule(int x, int y)
+void UpdateParticule(int x, int y, Particule* part_to_update)
 {
-    switch (grille[y][x].element)
+    switch (part_to_update->element)
     {
     case SAND://! TODO_REWORK : WATER INTERACTION PHYSICS
         if((grille[y+1][x].element == VOID) || (grille[y+1][x].element == LIQUID))//Si la place en bas est libre
         {
-            int id_part = grille[y][x].ID;
-            if(Particules[id_part].hasbeenupdated == SDL_FALSE) //On update sa pos
+            //int id_part = grille[y][x].ID;
+            
+            if(part_to_update->hasbeenupdated == SDL_FALSE) //On update sa pos
             {
                 if(grille[y+1][x].element == LIQUID) //Si la place en bas est du liquide, on déplace le liquide
                 {
-                    int id_neighbour = grille[y+1][x].ID; //ID de l'eau
-                    if(Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                    Particule* part_neighbour = grille[y+1][x].part; //@ de l'eau
+                    if(part_neighbour->hasbeenupdated == SDL_FALSE)
                     {
-                        Particules[id_part].pos_y_norm += 1;
-                        Particules[id_part].box.y += PARTICULE_SIZE;
-                        Particules[id_part].hasbeenupdated = SDL_TRUE;
-                        Particules[id_neighbour].pos_y_norm -=1;
-                        Particules[id_neighbour].box.y -= PARTICULE_SIZE;
-                        Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
+                        part_to_update->pos_y_norm += 1;
+                        part_to_update->box.y += PARTICULE_SIZE;
+                        part_to_update->hasbeenupdated = SDL_TRUE;
+                        part_neighbour->pos_y_norm -=1;
+                        part_neighbour->box.y -= PARTICULE_SIZE;
+                        part_neighbour->hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = LIQUID;
-                        grille[y][x].ID = Particules[id_neighbour].ID;
+                        grille[y][x].part = part_neighbour;
                         grille[y+1][x].element = SAND;
-                        grille[y+1][x].ID = Particules[id_part].ID;
+                        grille[y+1][x].part = part_to_update;
                     }
                 }
                 else
                 {
-                    Particules[id_part].pos_y_norm += 1;
-                    Particules[id_part].box.y += PARTICULE_SIZE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_to_update->pos_y_norm += 1;
+                    part_to_update->box.y += PARTICULE_SIZE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                     grille[y][x].element = VOID;
-                    grille[y][x].ID = PARTICULE_MAX + 1;
+                    grille[y][x].part = NULL;
                     grille[y+1][x].element = SAND;
-                    grille[y+1][x].ID = Particules[id_part].ID;
+                    grille[y+1][x].part = part_to_update;
                 }
             }
             break;
@@ -44,46 +46,46 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
         {
             if(((grille[y+1][x-1].element == VOID) || (grille[y+1][x-1].element == LIQUID)))//Sinon si la place en bas à gauche est libre
             {
-                int id_part=grille[y][x].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE)//On update sa pos
+                //int id_part=grille[y][x].ID;
+                if(part_to_update->hasbeenupdated == SDL_FALSE)//On update sa pos
                 {
                     if(grille[y+1][x-1].element == LIQUID)
                     {
-                        int id_neighbour = grille[y+1][x-1].ID;
-                        if(Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                        Particule* part_neighbour = grille[y+1][x-1].part;
+                        if(part_neighbour->hasbeenupdated == SDL_FALSE)
                         {
                             int c = 0;
                             while (grille[y+1-c][x-1].element != VOID)
                             {
                                 c++;
                             }
-                            Particules[id_neighbour].pos_y_norm -= c;
-                            Particules[id_neighbour].box.y -= PARTICULE_SIZE*c;
-                            Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-                            Particules[id_part].pos_y_norm += 1; 
-                            Particules[id_part].pos_x_norm -= 1; 
-                            Particules[id_part].box.x -= PARTICULE_SIZE; 
-                            Particules[id_part].box.y += PARTICULE_SIZE;
-                            Particules[id_part].hasbeenupdated = SDL_TRUE;
+                            part_neighbour->pos_y_norm -= c;
+                            part_neighbour->box.y -= PARTICULE_SIZE*c;
+                            part_neighbour->hasbeenupdated = SDL_TRUE;
+                            part_to_update->pos_y_norm += 1; 
+                            part_to_update->pos_x_norm -= 1; 
+                            part_to_update->box.x -= PARTICULE_SIZE; 
+                            part_to_update->box.y += PARTICULE_SIZE;
+                            part_to_update->hasbeenupdated = SDL_TRUE;
                             grille[y+1][x-1].element = SAND;
-                            grille[y+1][x-1].ID = id_part;
+                            grille[y+1][x-1].part = part_to_update;
                             grille[y][x].element = VOID;
-                            grille[y][x].ID = PARTICULE_MAX + 1;  
+                            grille[y][x].part = NULL;  
                             grille[y+1-c][x-1].element = LIQUID;
-                            grille[y+1-c][x-1].ID = id_neighbour;
+                            grille[y+1-c][x-1].part = part_neighbour;
                         }
                     }
                     else
                     {
-                        Particules[id_part].pos_y_norm += 1;
-                        Particules[id_part].pos_x_norm -= 1;
-                        Particules[id_part].box.y+=PARTICULE_SIZE;
-                        Particules[id_part].box.x-=PARTICULE_SIZE;
-                        Particules[id_part].hasbeenupdated = SDL_TRUE;
+                        part_to_update->pos_y_norm += 1;
+                        part_to_update->pos_x_norm -= 1;
+                        part_to_update->box.y+=PARTICULE_SIZE;
+                        part_to_update->box.x-=PARTICULE_SIZE;
+                        part_to_update->hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = VOID;
-                        grille[y][x].ID = PARTICULE_MAX + 1;
+                        grille[y][x].part = NULL;
                         grille[y+1][x-1].element = SAND;
-                        grille[y+1][x-1].ID = id_part;
+                        grille[y+1][x-1].part = part_to_update;
                     } 
                 }
                 break;
@@ -93,46 +95,46 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
         {
             if(((grille[y+1][x+1].element == VOID) || (grille[y+1][x+1].element == LIQUID)))//Sinon si la place en bas à droite est libre 
             {
-                int id_part = grille[y][x].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+                //int id_part = grille[y][x].ID;
+                if(part_to_update->hasbeenupdated == SDL_FALSE)
                 {
                     if(grille[y+1][x+1].element == LIQUID)
                     {
-                        int id_neighbour = grille[y+1][x+1].ID;
-                        if(Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                        Particule* part_neighbour = grille[y+1][x+1].part;
+                        if(part_neighbour->hasbeenupdated == SDL_FALSE)
                         {
                             int c = 0;
                             while (grille[y+1-c][x+1].element != VOID)
                             {
                                 c++;
                             }
-                            Particules[id_neighbour].pos_y_norm -= c;
-                            Particules[id_neighbour].box.y -= PARTICULE_SIZE*c;
-                            Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-                            Particules[id_part].pos_y_norm += 1; 
-                            Particules[id_part].pos_x_norm += 1; 
-                            Particules[id_part].box.x += PARTICULE_SIZE; 
-                            Particules[id_part].box.y += PARTICULE_SIZE;
-                            Particules[id_part].hasbeenupdated = SDL_TRUE;
+                            part_neighbour->pos_y_norm -= c;
+                            part_neighbour->box.y -= PARTICULE_SIZE*c;
+                            part_neighbour->hasbeenupdated = SDL_TRUE;
+                            part_to_update->pos_y_norm += 1; 
+                            part_to_update->pos_x_norm += 1; 
+                            part_to_update->box.x += PARTICULE_SIZE; 
+                            part_to_update->box.y += PARTICULE_SIZE;
+                            part_to_update->hasbeenupdated = SDL_TRUE;
                             grille[y+1][x+1].element = SAND;
-                            grille[y+1][x+1].ID = id_part;
+                            grille[y+1][x+1].part = part_to_update;
                             grille[y][x].element = VOID;
-                            grille[y][x].ID = PARTICULE_MAX+1;
+                            grille[y][x].part = NULL;
                             grille[y+1-c][x+1].element = LIQUID;
-                            grille[y+1-c][x+1].ID = id_neighbour;
+                            grille[y+1-c][x+1].part = part_neighbour;
                         }
                     }
                     else 
                     {
-                        Particules[id_part].pos_y_norm += 1;
-                        Particules[id_part].pos_x_norm += 1;
-                        Particules[id_part].box.y += PARTICULE_SIZE;
-                        Particules[id_part].box.x += PARTICULE_SIZE;
-                        Particules[id_part].hasbeenupdated = SDL_TRUE;
+                        part_to_update->pos_y_norm += 1;
+                        part_to_update->pos_x_norm += 1;
+                        part_to_update->box.y += PARTICULE_SIZE;
+                        part_to_update->box.x += PARTICULE_SIZE;
+                        part_to_update->hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = VOID;
-                        grille[y][x].ID = PARTICULE_MAX + 1;
+                        grille[y][x].part = NULL;
                         grille[y+1][x+1].element = SAND;
-                        grille[y+1][x+1].ID = id_part;
+                        grille[y+1][x+1].part = part_to_update;
                     }
                 }
                 break;
@@ -143,16 +145,16 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
     case LIQUID:
         if(grille[y+1][x].element == VOID)//Si la place en bas est libre
         {
-            int id_part = grille[y][x].ID;
-            if(Particules[id_part].hasbeenupdated == SDL_FALSE) //On update sa pos
+            //int id_part = grille[y][x].ID;
+            if(part_to_update->hasbeenupdated == SDL_FALSE) //On update sa pos
             {
-                Particules[id_part].pos_y_norm += 1;
-                Particules[id_part].box.y += PARTICULE_SIZE;
-                Particules[id_part].hasbeenupdated = SDL_TRUE;
+                part_to_update->pos_y_norm += 1;
+                part_to_update->box.y += PARTICULE_SIZE;
+                part_to_update->hasbeenupdated = SDL_TRUE;
                 grille[y][x].element = VOID;
-                grille[y][x].ID = PARTICULE_MAX + 1;
+                grille[y][x].part = NULL;
                 grille[y+1][x].element = LIQUID;
-                grille[y+1][x].ID = id_part;
+                grille[y+1][x].part = part_to_update;
             }
             break;
         }
@@ -160,18 +162,18 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
         {
             if(grille[y+1][x-1].element == VOID)//Sinon si la place en bas à gauche est libre
             {
-                int id_part = grille[y][x].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE)//On update sa pos
+                //int id_part = grille[y][x].ID;
+                if(part_to_update->hasbeenupdated == SDL_FALSE)//On update sa pos
                 {
-                    Particules[id_part].pos_y_norm += 1;
-                    Particules[id_part].pos_x_norm -= 1;
-                    Particules[id_part].box.y+=PARTICULE_SIZE;
-                    Particules[id_part].box.x-=PARTICULE_SIZE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_to_update->pos_y_norm += 1;
+                    part_to_update->pos_x_norm -= 1;
+                    part_to_update->box.y+=PARTICULE_SIZE;
+                    part_to_update->box.x-=PARTICULE_SIZE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                     grille[y][x].element = VOID;
-                    grille[y][x].ID = PARTICULE_MAX + 1;
+                    grille[y][x].part = NULL;
                     grille[y+1][x-1].element = LIQUID;
-                    grille[y+1][x-1].ID = id_part;
+                    grille[y+1][x-1].part = part_to_update;
                 }
                 break;
             }
@@ -180,33 +182,33 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
         {
             if(grille[y+1][x+1].element == VOID)//Sinon si la place en bas à droite est libre 
             {
-                int id_part = grille[y][x].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+                //int id_part = grille[y][x].ID;
+                if(part_to_update->hasbeenupdated == SDL_FALSE)
                 {
-                    Particules[id_part].pos_y_norm += 1;
-                    Particules[id_part].pos_x_norm += 1;
-                    Particules[id_part].box.y+=PARTICULE_SIZE;
-                    Particules[id_part].box.x+=PARTICULE_SIZE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_to_update->pos_y_norm += 1;
+                    part_to_update->pos_x_norm += 1;
+                    part_to_update->box.y+=PARTICULE_SIZE;
+                    part_to_update->box.x+=PARTICULE_SIZE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                     grille[y][x].element = VOID;
-                    grille[y][x].ID = PARTICULE_MAX + 1;
+                    grille[y][x].part = NULL;
                     grille[y+1][x+1].element = LIQUID;
-                    grille[y+1][x+1].ID = id_part; 
+                    grille[y+1][x+1].part = part_to_update; 
                 }
                 break;
             }
             if((grille[y][x+1].element == VOID) && (rand()%2 == 0))//On glisse ou à droite...
             {
-                int id_part = grille[y][x].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+                //int id_part = grille[y][x].ID;
+                if(part_to_update->hasbeenupdated == SDL_FALSE)
                 {
-                    Particules[id_part].pos_x_norm += 1;
-                    Particules[id_part].box.x+=PARTICULE_SIZE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_to_update->pos_x_norm += 1;
+                    part_to_update->box.x+=PARTICULE_SIZE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                     grille[y][x].element = VOID;
-                    grille[y][x].ID = PARTICULE_MAX + 1;
+                    grille[y][x].part = NULL;
                     grille[y][x+1].element = LIQUID;
-                    grille[y][x+1].ID = id_part;
+                    grille[y][x+1].part = part_to_update;
                 }
                 break;
             }
@@ -215,16 +217,16 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
         {
             if((grille[y][x-1].element == VOID) && ((x-1) >= 0))//Ou à gauche
             {
-                int id_part = grille[y][x].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+                //int id_part = grille[y][x].ID;
+                if(part_to_update->hasbeenupdated == SDL_FALSE)
                 {
-                    Particules[id_part].pos_x_norm -= 1;
-                    Particules[id_part].box.x-=PARTICULE_SIZE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_to_update->pos_x_norm -= 1;
+                    part_to_update->box.x-=PARTICULE_SIZE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                     grille[y][x].element = VOID;
-                    grille[y][x].ID = PARTICULE_MAX + 1;
+                    grille[y][x].part = NULL;
                     grille[y][x-1].element = LIQUID;
-                    grille[y][x-1].ID = id_part;
+                    grille[y][x-1].part = part_to_update;
                 }
                 break;
             }
@@ -232,17 +234,17 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
         break;
     case FIRE:
     {
-        int id_part = grille[y][x].ID;
-        Particules[id_part].update_counter++;
+        part_to_update->update_counter++;
         if (grille[y+1][x].element == LIQUID) //Voisin du bas
         {
-            int id_neighbour = grille[y+1][x].ID;
-            if(Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+            Particule* part_neighbour = grille[y+1][x].part;
+            if(part_neighbour->hasbeenupdated == SDL_FALSE)
             {
-                Particules[id_part].element = SMOKE;
-                Particules[id_part].hasbeenupdated = SDL_TRUE;
-                Particules[id_part].update_counter = 0;
-
+                //Fire becomes smoke
+                part_to_update->element = SMOKE;
+                part_to_update->hasbeenupdated = SDL_TRUE;
+                part_to_update->update_counter = 0;
+                /*
                 if(Particules[current_particule-1].element != VOID)
                 {
                     Particules[id_neighbour] = Particules[current_particule-1];
@@ -252,50 +254,55 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
                 current_particule--;
                 
                 Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-
+                */
+                //Water part is deleted
+                DeleteParticule(part_neighbour);
                 grille[y][x].element = SMOKE;
                 grille[y+1][x].element = VOID;
-                grille[y+1][x].ID = PARTICULE_MAX+1;
+                grille[y+1][x].part = NULL;
+                current_particule--;
             }
         }
-        if ((y-1)>=0 && Particules[id_part].hasbeenupdated == SDL_FALSE) //Voisin du haut, on check dabord si on peut regarder la mémoire, pas élégant, à fix
+        if ((y-1)>=0 && part_to_update->hasbeenupdated == SDL_FALSE) //Voisin du haut, on check dabord si on peut regarder la mémoire, pas élégant, à fix
         {
             if(grille[y-1][x].element == LIQUID) //Voisin du haut
             {
-                int id_neighbour = grille[y-1][x].ID;
-                if(Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                Particule* part_neighbour = grille[y-1][x].part;
+                if(part_neighbour->hasbeenupdated == SDL_FALSE)
                 {
-                    Particules[id_part].element = SMOKE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
-                    Particules[id_part].update_counter = 0;
+                    part_to_update->element = SMOKE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
+                    part_to_update->update_counter = 0;
 
-                    if(Particules[current_particule-1].element != VOID)
+                    /*if(Particules[current_particule-1].element != VOID)
                     {
                         Particules[id_neighbour] = Particules[current_particule-1];
                         Particules[id_neighbour].ID = id_neighbour;
                         grille[Particules[id_neighbour].pos_y_norm][Particules[id_neighbour].pos_x_norm].ID = id_neighbour;
                     }
-                    current_particule--;
+                    
                     Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-
+                    */
+                    DeleteParticule(part_neighbour);
                     grille[y][x].element = SMOKE;
                     grille[y-1][x].element = VOID;
-                    grille[y-1][x].ID = PARTICULE_MAX+1;
+                    grille[y-1][x].part = NULL;
+                    current_particule--;
                 }
             }
         }
-        if (x+1<GRID_WIDTH && Particules[id_part].hasbeenupdated == SDL_FALSE)
+        if (x+1<GRID_WIDTH && part_to_update->hasbeenupdated == SDL_FALSE)
         {
             if(grille[y][x+1].element == LIQUID) //Voisin de droite
             {
-                int id_neighbour = grille[y][x+1].ID;
-                if(Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                Particule* part_neighbour = grille[y][x+1].part;
+                if(part_neighbour->hasbeenupdated == SDL_FALSE)
                 {
-                    Particules[id_part].element = SMOKE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
-                    Particules[id_part].update_counter = 0;
+                    part_to_update->element = SMOKE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
+                    part_to_update->update_counter = 0;
 
-                    if(Particules[current_particule-1].element != VOID)
+                    /*if(Particules[current_particule-1].element != VOID)
                     {
                         Particules[id_neighbour] = Particules[current_particule-1];
                         Particules[id_neighbour].ID = id_neighbour;
@@ -303,25 +310,27 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
                     }
                     current_particule--;
                     Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-
+                    */
+                    DeleteParticule(part_neighbour);
                     grille[y][x].element = SMOKE;
                     grille[y][x+1].element = VOID;
-                    grille[y][x+1].ID = PARTICULE_MAX+1;
+                    grille[y][x+1].part = NULL;
+                    current_particule--;
                 }
             }
         }
-        if (x-1>=0 && Particules[id_part].hasbeenupdated == SDL_FALSE)
+        if (x-1>=0 && part_to_update->hasbeenupdated == SDL_FALSE)
         {
             if (grille[y][x-1].element == LIQUID) //Voisin de gauche
             {
-                int id_neighbour = grille[y][x-1].ID;
-                if(Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                Particule* part_neighbour = grille[y][x-1].part;
+                if(part_neighbour->hasbeenupdated == SDL_FALSE)
                 {
-                    Particules[id_part].element = SMOKE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
-                    Particules[id_part].update_counter = 0;
+                    part_to_update->element = SMOKE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
+                    part_to_update->update_counter = 0;
 
-                    if(Particules[current_particule-1].element != VOID)
+                    /*if(Particules[current_particule-1].element != VOID)
                     {
                         Particules[id_neighbour] = Particules[current_particule-1];
                         Particules[id_neighbour].ID = id_neighbour;
@@ -329,83 +338,83 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
                     }
                     current_particule--;
                     Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-
+                    */
+                    DeleteParticule(part_neighbour);
                     grille[y][x].element = SMOKE;
                     grille[y][x-1].element = VOID;
-                    grille[y][x-1].ID = PARTICULE_MAX+1;
+                    grille[y][x-1].part = NULL;
+                    current_particule--;
                 }
             }
         }
-
-        if(Particules[id_part].update_counter > 50)
+        if(part_to_update->update_counter > 50)
         {
             if(grille[y][x+1].element == WOOD)//Droite, si il y a du bois à côté, on met le feu au bois 
             {
-                int id_neighbour = grille[y][x+1].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE && Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                Particule* part_neighbour = grille[y][x+1].part;
+                if(part_to_update->hasbeenupdated == SDL_FALSE && part_neighbour->hasbeenupdated == SDL_FALSE)
                 {
                     grille[y][x+1].element = FIRE;
-                    Particules[id_neighbour].element = FIRE;
-                    Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_neighbour->element = FIRE;
+                    part_neighbour->hasbeenupdated = SDL_TRUE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                 }
             }
             else if(grille[y][x-1].element == WOOD) //Gauche
             {
-                int id_neighbour = grille[y][x-1].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE && Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                Particule* part_neighbour = grille[y][x-1].part;
+                if(part_to_update->hasbeenupdated == SDL_FALSE && part_neighbour->hasbeenupdated == SDL_FALSE)
                 {
                     grille[y][x-1].element = FIRE;
-                    Particules[id_neighbour].element = FIRE;
-                    Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_neighbour->element = FIRE;
+                    part_neighbour->hasbeenupdated = SDL_TRUE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                 }
             }
             else if(grille[y+1][x].element == WOOD) //En bas
             {
-                int id_neighbour = grille[y+1][x].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE && Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                Particule* part_neighbour = grille[y+1][x].part;
+                if(part_to_update->hasbeenupdated == SDL_FALSE && part_neighbour->hasbeenupdated == SDL_FALSE)
                 {
                     grille[y+1][x].element = FIRE;
-                    Particules[id_neighbour].element = FIRE;
-                    Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_neighbour->element = FIRE;
+                    part_neighbour->hasbeenupdated = SDL_TRUE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                 }
             }
             else if(grille[y-1][x].element == WOOD) //En haut
             {
-                int id_neighbour = grille[y-1][x].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE && Particules[id_neighbour].hasbeenupdated == SDL_FALSE)
+                Particule* part_neighbour = grille[y-1][x].part;
+                if(part_to_update->hasbeenupdated == SDL_FALSE && part_neighbour->hasbeenupdated == SDL_FALSE)
                 {
                     grille[y-1][x].element = FIRE;
-                    Particules[id_neighbour].element = FIRE;
-                    Particules[id_neighbour].hasbeenupdated = SDL_TRUE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_neighbour->element = FIRE;
+                    part_neighbour->hasbeenupdated = SDL_TRUE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                 }
             }
         }
-
-        if(Particules[id_part].update_counter > 200)//On se transforme en fumée
+        if(part_to_update->update_counter > 200)//On se transforme en fumée
         {
-            if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+            if(part_to_update->hasbeenupdated == SDL_FALSE)
             {
                 grille[y][x].element = SMOKE;
-                Particules[id_part].element = SMOKE;
-                Particules[id_part].update_counter = 0;
-                Particules[id_part].hasbeenupdated = SDL_TRUE;
+                part_to_update->element = SMOKE;
+                part_to_update->update_counter = 0;
+                part_to_update->hasbeenupdated = SDL_TRUE;
             }
         }
         else if(grille[y+1][x].element == VOID) //Sinon on tombe
         {
-            if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+            if(part_to_update->hasbeenupdated == SDL_FALSE)
             {
-                Particules[id_part].pos_y_norm += 1;
-                Particules[id_part].box.y += PARTICULE_SIZE;
-                Particules[id_part].hasbeenupdated = SDL_TRUE;
+                part_to_update->pos_y_norm += 1;
+                part_to_update->box.y += PARTICULE_SIZE;
+                part_to_update->hasbeenupdated = SDL_TRUE;
                 grille[y][x].element = VOID;
-                grille[y][x].ID = PARTICULE_MAX+1;
+                grille[y][x].part = NULL;
                 grille[y+1][x].element = FIRE;
-                grille[y+1][x].ID = Particules[id_part].ID;
+                grille[y+1][x].part = part_to_update;
             }
         }
         break;
@@ -415,16 +424,15 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
         {
             if(grille[y-1][x].element == VOID)//Si la place en haut est libre
             {
-                int id_part = grille[y][x].ID;
-                if(Particules[id_part].hasbeenupdated == SDL_FALSE) //On update sa pos
+                if(part_to_update->hasbeenupdated == SDL_FALSE) //On update sa pos
                 {
-                    Particules[id_part].pos_y_norm -= 1;
-                    Particules[id_part].box.y -= PARTICULE_SIZE;
-                    Particules[id_part].hasbeenupdated = SDL_TRUE;
+                    part_to_update->pos_y_norm -= 1;
+                    part_to_update->box.y -= PARTICULE_SIZE;
+                    part_to_update->hasbeenupdated = SDL_TRUE;
                     grille[y][x].element = VOID;
-                    grille[y][x].ID = PARTICULE_MAX + 1;
+                    grille[y][x].part = NULL;
                     grille[y-1][x].element = SMOKE;
-                    grille[y-1][x].ID = id_part;
+                    grille[y-1][x].part = part_to_update;
                 }
                 break;
             }
@@ -432,18 +440,17 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
             {
                 if(grille[y-1][x-1].element == VOID)//Sinon si la place en haut à gauche est libre
                 {
-                    int id_part = grille[y][x].ID;
-                    if(Particules[id_part].hasbeenupdated == SDL_FALSE)//On update sa pos
+                    if(part_to_update->hasbeenupdated == SDL_FALSE)//On update sa pos
                     {
-                        Particules[id_part].pos_y_norm -= 1;
-                        Particules[id_part].pos_x_norm -= 1;
-                        Particules[id_part].box.y-=PARTICULE_SIZE;
-                        Particules[id_part].box.x-=PARTICULE_SIZE;
-                        Particules[id_part].hasbeenupdated = SDL_TRUE;
+                        part_to_update->pos_y_norm -= 1;
+                        part_to_update->pos_x_norm -= 1;
+                        part_to_update->box.y-=PARTICULE_SIZE;
+                        part_to_update->box.x-=PARTICULE_SIZE;
+                        part_to_update->hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = VOID;
-                        grille[y][x].ID = PARTICULE_MAX + 1;
+                        grille[y][x].part = NULL;
                         grille[y-1][x-1].element = SMOKE;
-                        grille[y-1][x-1].ID = id_part;
+                        grille[y-1][x-1].part = part_to_update;
                     }
                     break;
                 }
@@ -452,33 +459,31 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
             {
                 if(grille[y-1][x+1].element == VOID)//Sinon si la place en haut à droite est libre 
                 {
-                    int id_part = grille[y][x].ID;
-                    if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+                    if(part_to_update->hasbeenupdated == SDL_FALSE)
                     {
-                        Particules[id_part].pos_y_norm -= 1;
-                        Particules[id_part].pos_x_norm += 1;
-                        Particules[id_part].box.y-=PARTICULE_SIZE;
-                        Particules[id_part].box.x+=PARTICULE_SIZE;
-                        Particules[id_part].hasbeenupdated = SDL_TRUE;
+                        part_to_update->pos_y_norm -= 1;
+                        part_to_update->pos_x_norm += 1;
+                        part_to_update->box.y-=PARTICULE_SIZE;
+                        part_to_update->box.x+=PARTICULE_SIZE;
+                        part_to_update->hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = VOID;
-                        grille[y][x].ID = PARTICULE_MAX + 1;
+                        grille[y][x].part = NULL;
                         grille[y-1][x+1].element = SMOKE;
-                        grille[y-1][x+1].ID = id_part; 
+                        grille[y-1][x+1].part = part_to_update; 
                     }
                     break;
                 }
                 if((grille[y][x+1].element == VOID) && rand()%2 == 0)//On glisse ou à droite...
                 {
-                    int id_part = grille[y][x].ID;
-                    if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+                    if(part_to_update->hasbeenupdated == SDL_FALSE)
                     {
-                        Particules[id_part].pos_x_norm += 1;
-                        Particules[id_part].box.x+=PARTICULE_SIZE;
-                        Particules[id_part].hasbeenupdated = SDL_TRUE;
+                        part_to_update->pos_x_norm += 1;
+                        part_to_update->box.x+=PARTICULE_SIZE;
+                        part_to_update->hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = VOID;
-                        grille[y][x].ID = PARTICULE_MAX + 1;
+                        grille[y][x].part = NULL;
                         grille[y][x+1].element = SMOKE;
-                        grille[y][x+1].ID = id_part;
+                        grille[y][x+1].part = part_to_update;
                     }
                     break;
                 }
@@ -487,16 +492,15 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
             {
                 if(grille[y][x-1].element == VOID)//Ou à gauche
                 {
-                    int id_part = grille[y][x].ID;
-                    if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+                    if(part_to_update->hasbeenupdated == SDL_FALSE)
                     {
-                        Particules[id_part].pos_x_norm -= 1;
-                        Particules[id_part].box.x -= PARTICULE_SIZE;
-                        Particules[id_part].hasbeenupdated = SDL_TRUE;
+                        part_to_update->pos_x_norm -= 1;
+                        part_to_update->box.x -= PARTICULE_SIZE;
+                        part_to_update->hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = VOID;
-                        grille[y][x].ID = PARTICULE_MAX + 1;
+                        grille[y][x].part = NULL;
                         grille[y][x-1].element = SMOKE;
-                        grille[y][x-1].ID = id_part;
+                        grille[y][x-1].part = part_to_update;
                     }
                     break;
                 }
@@ -508,16 +512,15 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
             {
                 if((grille[y][x+1].element == VOID) && rand()%2 == 0)//On glisse ou à droite...
                 {
-                    int id_part = grille[y][x].ID;
-                    if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+                    if(part_to_update->hasbeenupdated == SDL_FALSE)
                     {
-                        Particules[id_part].pos_x_norm += 1;
-                        Particules[id_part].box.x+=PARTICULE_SIZE;
-                        Particules[id_part].hasbeenupdated = SDL_TRUE;
+                        part_to_update->pos_x_norm += 1;
+                        part_to_update->box.x+=PARTICULE_SIZE;
+                        part_to_update->hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = VOID;
-                        grille[y][x].ID = PARTICULE_MAX + 1;
+                        grille[y][x].part = NULL;
                         grille[y][x+1].element = SMOKE;
-                        grille[y][x+1].ID = id_part;
+                        grille[y][x+1].part = part_to_update;
                     }
                     break;
                 }
@@ -526,16 +529,15 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
             {
                 if((grille[y][x-1].element == VOID) && ((x-1) >= 0))//Ou à gauche
                 {
-                    int id_part = grille[y][x].ID;
-                    if(Particules[id_part].hasbeenupdated == SDL_FALSE)
+                    if(part_to_update->hasbeenupdated == SDL_FALSE)
                     {
-                        Particules[id_part].pos_x_norm -= 1;
-                        Particules[id_part].box.x -= PARTICULE_SIZE;
-                        Particules[id_part].hasbeenupdated = SDL_TRUE;
+                        part_to_update->pos_x_norm -= 1;
+                        part_to_update->box.x -= PARTICULE_SIZE;
+                        part_to_update->hasbeenupdated = SDL_TRUE;
                         grille[y][x].element = VOID;
-                        grille[y][x].ID = PARTICULE_MAX + 1;
+                        grille[y][x].part = NULL;
                         grille[y][x-1].element = SMOKE;
-                        grille[y][x-1].ID = id_part;
+                        grille[y][x-1].part = part_to_update;
                     }
                     break;
                 }
@@ -547,11 +549,12 @@ void UpdateParticule(int x, int y, pixel** grille, Particule Particules[PARTICUL
     }
 }
 
-void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PARTICULE_MAX], Element element_param)
+//void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PARTICULE_MAX], Element element_param)
+void UpdateParticulesNumber(Mode mode, Element element_param)
 {
     switch (mode)
     {
-    case AUTO://Not usable 
+    /*case AUTO://Not usable 
         if((frame_count == 10) && (current_particule < PARTICULE_MAX)) //Rajoute une particule toute les 10 frames
         {
             Particules[current_particule].element = SAND;
@@ -567,10 +570,10 @@ void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PART
             current_particule++;
             frame_count = 0;
         }
-        break;
+        break;*/
     case MANUEL:
         if((ParticuleToBeCreated) && (!ParticuleToBeDestroyed) && (frame_count > 3 || FrameByFrameMode)) //Rajoute une particule tous les clicks
-        {
+        { 
             int Mouse_x, Mouse_y;
             SDL_GetMouseState(&Mouse_x, &Mouse_y);
             if(Mouse_x%PARTICULE_SIZE != 0)
@@ -591,7 +594,20 @@ void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PART
                     {
                         if(grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].element == VOID  && (current_particule < PARTICULE_MAX)) //On check que l'emplacement est bien vide
                         {
-                            Particules[current_particule].ID = current_particule;
+                            Particule* created_part = AddParticule();
+                            created_part->ID = current_particule;
+                            created_part->element = element_param;
+                            created_part->hasbeenupdated =SDL_TRUE;
+                            created_part->box.w = PARTICULE_SIZE;
+                            created_part->box.h = PARTICULE_SIZE;
+                            created_part->box.x = Mouse_x+TO_PIXEL_SIZE(i);
+                            created_part->box.y = Mouse_y+TO_PIXEL_SIZE(y);
+                            created_part->pos_x_norm = TO_PARTCULE_SIZE(created_part->box.x);
+                            created_part->pos_y_norm = TO_PARTCULE_SIZE(created_part->box.y);
+                            created_part->update_counter = 0;
+                            grille[created_part->pos_y_norm][created_part->pos_x_norm].element = element_param;
+                            grille[created_part->pos_y_norm][created_part->pos_x_norm].part = created_part;
+                            /*Particules[current_particule].ID = current_particule;
                             Particules[current_particule].element = element_param;
                             Particules[current_particule].hasbeenupdated = SDL_TRUE;
                             Particules[current_particule].box.w = PARTICULE_SIZE;
@@ -601,7 +617,7 @@ void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PART
                             Particules[current_particule].pos_x_norm = TO_PARTCULE_SIZE(Particules[current_particule].box.x);
                             Particules[current_particule].pos_y_norm = TO_PARTCULE_SIZE(Particules[current_particule].box.y);
                             grille[Particules[current_particule].pos_y_norm][Particules[current_particule].pos_x_norm].element = Particules[current_particule].element;
-                            grille[Particules[current_particule].pos_y_norm][Particules[current_particule].pos_x_norm].ID = Particules[current_particule].ID;
+                            grille[Particules[current_particule].pos_y_norm][Particules[current_particule].pos_x_norm].ID = Particules[current_particule].ID;*/
                             current_particule++;
                             frame_count = 0;
                         }
@@ -632,16 +648,18 @@ void UpdateParticulesNumber(Mode mode, pixel** grille, Particule Particules[PART
                     {
                         if(grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].element != VOID && grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].element != FLOOR)
                         {
-                            int id_part = grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].ID;
+                            Particule* part_to_delete = grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].part;
                             grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].element = VOID;
-                            grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].ID = PARTICULE_MAX + 1;
+                            grille[TO_PARTCULE_SIZE(Mouse_y)+y][TO_PARTCULE_SIZE(Mouse_x)+i].part = NULL;
                             //Replace with the last particule in the list
-                            if(Particules[current_particule-1].element != VOID)
+                            /*if(Particules[current_particule-1].element != VOID)
                             {
                                 Particules[id_part] = Particules[current_particule-1]; //Replace all parameters
                                 Particules[id_part].ID = id_part; //change the ID
                                 grille[Particules[id_part].pos_y_norm][Particules[id_part].pos_x_norm].ID = id_part; //Change the grid ID
-                            }
+                            }*/
+                            DeleteParticule(part_to_delete);
+                            printf("test\n");
                             current_particule--;
                             frame_count = 0;
                         }    
@@ -677,7 +695,7 @@ void CreateFloor(pixel** grille, SDL_Rect FloorAndWall[GRID_WIDTH+GRID_HEIGHT])
     for(int i = 0; i<GRID_WIDTH; i++)
     {
         grille[GRID_HEIGHT-1][i].element = FLOOR;
-        grille[GRID_HEIGHT-1][i].ID = PARTICULE_MAX+1;
+        grille[GRID_HEIGHT-1][i].part = NULL;
         FloorAndWall[i].h = PARTICULE_SIZE;
         FloorAndWall[i].w = PARTICULE_SIZE;
         FloorAndWall[i].y = TO_PIXEL_SIZE((GRID_HEIGHT-1));
@@ -686,7 +704,7 @@ void CreateFloor(pixel** grille, SDL_Rect FloorAndWall[GRID_WIDTH+GRID_HEIGHT])
     for (int i = 0; i<(GRID_HEIGHT-1); i++)
     {
         grille[GRID_HEIGHT-2-i][GRID_WIDTH-1].element = FLOOR;
-        grille[GRID_HEIGHT-2-i][GRID_WIDTH-1].ID = PARTICULE_MAX+1;
+        grille[GRID_HEIGHT-2-i][GRID_WIDTH-1].part = NULL;
         FloorAndWall[GRID_WIDTH+i].h = PARTICULE_SIZE;
         FloorAndWall[GRID_WIDTH+i].w = PARTICULE_SIZE;
         FloorAndWall[GRID_WIDTH+i].y = TO_PIXEL_SIZE((GRID_HEIGHT-2-i));

@@ -56,6 +56,7 @@ void Init(SDL_Window** fenetre, SDL_Renderer** renderer)
     {
         grille[i] = malloc(sizeof(pixel)*GRID_WIDTH);
     }    
+    part_header = NULL;
 }
 
 void ExitWithError(const char* message)
@@ -72,14 +73,63 @@ void FrameCap(Uint32 starting_tick,int fps)
     }
 }
 
-void ClearGrid(pixel** grille)
+void ClearGrid()
 {
     for (int y = 0; y < GRID_HEIGHT; y++)
     {
         for (int x = 0; x < GRID_WIDTH; x++)
         {
-            grille[y][x].ID = PARTICULE_MAX + 1;
+            grille[y][x].part = NULL;
             grille[y][x].element = VOID;
         }
     }
+}
+
+Particule* AddParticule()
+{
+    Particule* part_created;
+    part_created = (Particule*) malloc(sizeof(Particule));
+    if(part_header==NULL)
+        part_created->previous = NULL;
+    else
+    {
+        part_created->previous = part_header;
+        part_created->previous->next = part_created;
+    }
+        
+    part_created->next = NULL;
+    part_header = part_created;
+    return part_created;
+}
+
+void DeleteParticule(Particule* part_to_delete)
+{
+    if(part_to_delete->previous != NULL)
+    {
+        if (part_to_delete->next != NULL)
+        {
+            part_to_delete->previous->next = part_to_delete->next;
+            part_to_delete->next->previous = part_to_delete->previous;
+        }
+        else //Is the last on the list
+        {
+            part_to_delete->previous->next = NULL;
+            part_header = part_to_delete->previous;   
+        }   
+    }
+    else //Is the first one on the list
+    {
+        if(part_to_delete->next != NULL)
+        {
+            part_to_delete->next->previous = NULL;
+            //part_header = part_to_delete->next;
+        }
+        else//...and the only one
+        {
+            part_header = NULL;
+        }
+    }
+    
+    free(part_to_delete);
+    part_to_delete = NULL;
 }

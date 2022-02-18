@@ -36,13 +36,6 @@ typedef enum Element
     ELEMENT_COUNTER, //enum counter
 }Element;
 
-//Représente chaque pixel normalisé (5x5) de la grille 
-typedef struct pixel
-{
-    int ID; //L'ID unique du pixel, doit être PARTICULE_MAX+1 si element = void
-    Element element; //L'élément associé au pixel
-}pixel;
-
 //Chaque Particule est associé à un pixel selon sa position dans l'écran
 typedef struct Particule
 {
@@ -55,11 +48,22 @@ typedef struct Particule
     int update_counter; //Compte le nombre de fois que la particule a été update, peut ne pas être utilisé
     SDL_Rect box; //Son hit box, qui sert aussi au rendu
     SDL_bool hasbeenupdated; //True si la particule a été update durant la boucle d'update, empêche de l'update plusieurs fois
+    struct Particule* next;
+    struct Particule* previous;
 }Particule;
+
+//Représente chaque pixel normalisé (5x5) de la grille 
+typedef struct pixel
+{
+    //int ID; //L'ID unique du pixel, doit être PARTICULE_MAX+1 si element = void
+    Particule* part; //Particule utilisé par le pixel, NULL si vide
+    Element element; //L'élément associé au pixel
+}pixel;
 
 //Scene
 extern pixel** grille; //La grille de jeu
-extern Particule Particules[PARTICULE_MAX]; //On déclare nos Particules, selon le nombre maxi choisi
+//extern Particule Particules[PARTICULE_MAX]; //On déclare nos Particules, selon le nombre maxi choisi
+extern Particule* part_header;
 extern SDL_Rect FloorAndWall[GRID_WIDTH+GRID_HEIGHT]; //The floor and the wall, duh
 //SDL_Rect WaterSelection[SELECTION_SIZE*SELECTION_SIZE]; //The water box selection menu
 

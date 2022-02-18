@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     //-----Init de la fonction rand()------
     srand((unsigned int) time(&t));
     //-------------------------------------
-    ClearGrid(grille);
+    ClearGrid();
     //Créé le sol
     CreateFloor(grille, FloorAndWall);
     SDL_ShowCursor(SDL_DISABLE);//On disable le curseur pour pouvoir créer le notre à partir des SDL_Rect
@@ -49,22 +49,31 @@ int main(int argc, char* argv[])
             frame_count++;//Comptage des frames, pas utile pour cap les fps mais pour créer de particules toutes les x frames
         if(!Pause)
         {
-            UpdateParticulesNumber(MANUEL, grille, Particules, element_param);//Check if a particule has to be created
+            //UpdateParticulesNumber(MANUEL, grille, Particules, element_param);//Check if a particule has to be created
+            UpdateParticulesNumber(MANUEL, element_param);
             if(!FrameByFrameMode)
             {                   //-1-1 so as to avoid updating the floor, which would be pointless
                 for(int y = GRID_HEIGHT-2; y>=0; y = y-1)//On parcourt la grille toute les frames
                 {
                     for(int x = GRID_WIDTH-1; x>= 0; x = x-1)
                     {
-                        if(grille[y][x].element != VOID && grille[y][x].element != SOLID)//Il y a un truc qui peut bouger
+                        /*if(grille[y][x].element != VOID && grille[y][x].element != SOLID)//Il y a un truc qui peut bouger
                         {
                             UpdateParticule(x, y, grille, Particules);//Update le truc
+                        }*/
+                        //printf("%d,%d\n",x,y);
+                        if (grille[y][x].part != NULL)
+                        {
+                            //printf("coucou\n");
+                            UpdateParticule(x, y, grille[y][x].part);
                         }
                     }
                 }
-                for (int i = 0; i < current_particule; i++)
+                Particule* part_loop = part_header;
+                while (part_loop != NULL)
                 {
-                    Particules[i].hasbeenupdated = SDL_FALSE;
+                    part_loop->hasbeenupdated = SDL_FALSE;
+                    part_loop = part_loop->previous;
                 }
             }
         }
@@ -158,15 +167,21 @@ int main(int argc, char* argv[])
                             {
                                 for(int x = GRID_WIDTH-1; x>= 0; x = x-1)//(int x = 0; x<160; x = x+1)
                                 {
-                                    if(grille[y][x].element != VOID && grille[y][x].element != SOLID)//Il y a un truc qui peut bouger
+                                    /*if(grille[y][x].element != VOID && grille[y][x].element != SOLID)//Il y a un truc qui peut bouger
                                     {
                                         UpdateParticule(x, y, grille, Particules);//Update le truc
+                                    }*/
+                                    if (grille[y][x].part != NULL)
+                                    {
+                                        UpdateParticule(x, y, grille[y][x].part);
                                     }
                                 }
                             }
-                            for (int i = 0; i < current_particule; i++)
+                            Particule* part_loop = part_header;
+                            while (part_loop != NULL)
                             {
-                                Particules[i].hasbeenupdated = SDL_FALSE;
+                                part_loop->hasbeenupdated = SDL_FALSE;
+                                part_loop = part_loop->previous;
                             }
                         }
                         break;
@@ -180,7 +195,6 @@ int main(int argc, char* argv[])
                 {
                     //Change size of the cursor to a bigger one
                     cursor_pad+=PARTICULE_SIZE;
-
                 }
                 else if(event.wheel.y < 0) //Scroll down
                 {
@@ -203,7 +217,6 @@ int main(int argc, char* argv[])
                 ParticuleToBeCreated = SDL_FALSE;
             }
         }
-        
         //On clear le renderer
         if(SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE) != 0){ExitWithError("SDL_RenderDrawColor");}
         if(SDL_RenderClear(renderer) != 0){ExitWithError("SDL_RenderClear");}
@@ -213,9 +226,10 @@ int main(int argc, char* argv[])
         if(SDL_RenderFillRects(renderer, FloorAndWall, (GRID_HEIGHT+GRID_WIDTH)) != 0 ){ExitWithError("SDL_RenderFillRects");}
 
         //Rendu des particules
-        for(int i = 0; i<current_particule; i++)
+        Particule* part_loop = part_header;
+        while(part_loop != NULL)
         {
-            switch (Particules[i].element)
+            switch (part_loop->element)
             {
             case SAND:
                 if(SDL_SetRenderDrawColor(renderer, ColorSand.r, ColorSand.g, ColorSand.b, ColorSand.a) != 0){ExitWithError("SDL_RenderDrawColor_SAND");}
@@ -239,7 +253,8 @@ int main(int argc, char* argv[])
                 ExitWithError("Particule with Error Element detected");
                 break;
             }
-            if(SDL_RenderFillRect(renderer, &Particules[i].box) != 0){ExitWithError("SDL_RenderFillRect");}
+            if(SDL_RenderFillRect(renderer, &part_loop->box) != 0){ExitWithError("SDL_RenderFillRect");}
+            part_loop = part_loop->previous;
         }
         //Rendu du curseur
         UpdateCursor(&renderer);
@@ -263,6 +278,15 @@ int main(int argc, char* argv[])
     }
 
     //Quitte l'application proprement
+    Particule* part_loop;
+    while (part_header != NULL)
+    {
+        part_loop = part_header;
+        part_header = part_loop->previous;
+        free(part_loop);
+    }
+    
+
     TTF_CloseFont(Sans);
     TTF_Quit();
     for (int i = 0; i < GRID_HEIGHT; i++)
