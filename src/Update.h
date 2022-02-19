@@ -26,8 +26,8 @@ extern void UpdateParticulesNumber(Mode mode, Element element_param);
  *should be called in a nested for loop so that it can go through every cell.
  *The x and y coordinates should be the normalized coord (5x5).
  */
-//extern void UpdateParticule(int x, int y, pixel**, Particule[PARTICULE_MAX]);
 extern void UpdateParticule(int x,int y, Particule* part_to_update);
+
 //Draw the Water selection menu to the coord x and y.
 extern void DrawWaterSelection(int , int, SDL_Rect[SELECTION_SIZE*SELECTION_SIZE]);
 

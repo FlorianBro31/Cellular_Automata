@@ -49,7 +49,6 @@ int main(int argc, char* argv[])
             frame_count++;//Comptage des frames, pas utile pour cap les fps mais pour créer de particules toutes les x frames
         if(!Pause)
         {
-            //UpdateParticulesNumber(MANUEL, grille, Particules, element_param);//Check if a particule has to be created
             UpdateParticulesNumber(MANUEL, element_param);
             if(!FrameByFrameMode)
             {                   //-1-1 so as to avoid updating the floor, which would be pointless
@@ -57,14 +56,8 @@ int main(int argc, char* argv[])
                 {
                     for(int x = GRID_WIDTH-1; x>= 0; x = x-1)
                     {
-                        /*if(grille[y][x].element != VOID && grille[y][x].element != SOLID)//Il y a un truc qui peut bouger
-                        {
-                            UpdateParticule(x, y, grille, Particules);//Update le truc
-                        }*/
-                        //printf("%d,%d\n",x,y);
                         if (grille[y][x].part != NULL)
                         {
-                            //printf("coucou\n");
                             UpdateParticule(x, y, grille[y][x].part);
                         }
                     }
@@ -165,12 +158,8 @@ int main(int argc, char* argv[])
                             frame_count++;
                             for(int y = GRID_HEIGHT-2; y>=0; y = y-1)//On parcourt la grille toute les frames (en évitant le sol)
                             {
-                                for(int x = GRID_WIDTH-1; x>= 0; x = x-1)//(int x = 0; x<160; x = x+1)
+                                for(int x = GRID_WIDTH-1; x>= 0; x = x-1)
                                 {
-                                    /*if(grille[y][x].element != VOID && grille[y][x].element != SOLID)//Il y a un truc qui peut bouger
-                                    {
-                                        UpdateParticule(x, y, grille, Particules);//Update le truc
-                                    }*/
                                     if (grille[y][x].part != NULL)
                                     {
                                         UpdateParticule(x, y, grille[y][x].part);

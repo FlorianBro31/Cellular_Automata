@@ -55,14 +55,12 @@ typedef struct Particule
 //Représente chaque pixel normalisé (5x5) de la grille 
 typedef struct pixel
 {
-    //int ID; //L'ID unique du pixel, doit être PARTICULE_MAX+1 si element = void
     Particule* part; //Particule utilisé par le pixel, NULL si vide
     Element element; //L'élément associé au pixel
 }pixel;
 
 //Scene
 extern pixel** grille; //La grille de jeu
-//extern Particule Particules[PARTICULE_MAX]; //On déclare nos Particules, selon le nombre maxi choisi
 extern Particule* part_header;
 extern SDL_Rect FloorAndWall[GRID_WIDTH+GRID_HEIGHT]; //The floor and the wall, duh
 //SDL_Rect WaterSelection[SELECTION_SIZE*SELECTION_SIZE]; //The water box selection menu

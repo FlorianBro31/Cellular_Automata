@@ -122,14 +122,12 @@ void DeleteParticule(Particule* part_to_delete)
         if(part_to_delete->next != NULL)
         {
             part_to_delete->next->previous = NULL;
-            //part_header = part_to_delete->next;
         }
         else//...and the only one
         {
             part_header = NULL;
         }
     }
-    
     free(part_to_delete);
     part_to_delete = NULL;
 }
